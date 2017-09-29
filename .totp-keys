@@ -1,0 +1,11 @@
+secrets [
+  { domain: "interarma",
+    key: "XXXXXXXXXXXX"
+  },
+  { domain: "gmail",
+    key: "YYYYYYYYYYYY"
+  },
+  { domain: "e4",
+    key: "YOUR GOOGLE_AUTHENTICATOR SECRET HERE"
+  }
+]

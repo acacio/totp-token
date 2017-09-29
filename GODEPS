@@ -1,0 +1,6 @@
+go get github.com/rsc/qr
+go get github.com/sec51/twofactor
+go get github.com/sec51/convert
+go get github.com/sec51/qrcode
+go get github.com/sec51/cryptoengine
+go get github.com/dchest/bcrypt_pbkdf
