@@ -1,11 +1,16 @@
+# This is your config file using text proto format
+# Comments allowed
+#
+# NB: your key should always be capitalized to me base64 std
+
 secrets [
-  { domain: "interarma",
-    key: "XXXXXXXXXXXX"
+  { domain: "test",
+    key: "D6D197B1C86B9666A0853132AE204A8C229FD2F7"
   },
   { domain: "gmail",
-    key: "YYYYYYYYYYYY"
-  },
-  { domain: "e4",
     key: "YOUR GOOGLE_AUTHENTICATOR SECRET HERE"
+  },
+  { domain: "namecheap",
+    key: "YYYYYYYYYYYY"
   }
 ]
