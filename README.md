@@ -1,6 +1,8 @@
 # TOTP token generator tool
 
-Reads ~/.totp-keys OR from command line.
+This tool can replace Google Authenticator and easily generate several secrets.
+
+Reads `~/.totp-keys` as it's config (so keep that file readable just by you).
 
 ## Usage
 
@@ -21,6 +23,7 @@ Typical use:
 ```
 
 The format of the .totp-keys file is a list of domain/secret pairs:
+Note that the keys need to be capitalized (although some domains give you keys with lowercase characters).
 
 ```
 secrets [

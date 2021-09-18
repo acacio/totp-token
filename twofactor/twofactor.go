@@ -1,3 +1,6 @@
+// This package and all its rights belong to github.com/sec51/twofactor Sec51
+// Minor changes introduced to export a private function
+
 package twofactor
 
 import (
