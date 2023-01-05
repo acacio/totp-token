@@ -27,13 +27,13 @@ Note that the keys need to be capitalized (although some domains give you keys w
 
 ```
 secrets [
-  { domain: "interarma",
+  { domain: "carta",
     key: "XXXXXXXXXXXX"
   },
   { domain: "gmail",
     key: "YYYYYYYYYYYY"
   },
-  { domain: "e4",
+  { domain: "dropbox",
     key: "YOUR GOOGLE_AUTHENTICATOR SECRET HERE"
   }
 ]
