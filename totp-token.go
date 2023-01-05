@@ -25,18 +25,10 @@ import (
 	"encoding/base32"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os/user"
 
 	"google.golang.org/protobuf/encoding/prototext"
 )
-
-func CHECK(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 
 var verbose *bool
 
@@ -56,12 +48,21 @@ func parseArgs() string {
 	case *domainPtr != "":
 		{
 			usr, err := user.Current()
-			CHECK(err)
-			data, err := ioutil.ReadFile(usr.HomeDir + "/.totp-keys")
-			CHECK(err)
+			if err != nil {
+				fmt.Println("Can't get current user info", err.Error())
+				os.Exit(1)
+			}
+
+			data, err := os.ReadFile(usr.HomeDir + "/.totp-keys")
+			if err != nil {
+				fmt.Println("Can't get current user homedir", err.Error())
+				os.Exit(2)
+			}
+
 			totps := &secrets.TOTPSecrets{}
 			if err := prototext.Unmarshal(data[:], totps); err != nil {
-				log.Fatalln("Failed to parse ~/.totp-keys:", err)
+				fmt.Println("Failed to parse ~/.totp-keys:", err)
+				os.Exit(3)
 			}
 			for _, secret := range totps.Secrets {
 				if secret.Domain == *domainPtr {
@@ -71,16 +72,17 @@ func parseArgs() string {
 			}
 		}
 	default:
-		log.Fatal("You must provide either a key OR a domain in ~/.totp-keys")
+		fmt.Println("You must provide either a key OR a domain in ~/.totp-keys")
+		os.Exit(3)
 	}
 	if key == "undef" {
-		log.Fatal("ERROR: Key not defined.")
+		fmt.Println("ERROR: Key not defined.")
+		os.Exit(3)
 	}
 	return key
 }
 
 func main() {
-
 	key := parseArgs()
 
 	if *verbose {
@@ -94,15 +96,15 @@ func main() {
 			binkey, err = base32.StdEncoding.DecodeString(newkey)
 		}
 		if err != nil {
-			fmt.Println("%v - please try to check your key", err)
-			os.Exit(2)
+			fmt.Println("Please try to check your key", err.Error())
+			os.Exit(4)
 		}
 	}
 
 	otp, err := twofactor.NewTOTPFromKey(binkey, "acacio@interarma.com", "InterArma", 6)
 	if err != nil {
-		fmt.Println("Error generating TOTP: %v", err)
-		os.Exit(3)
+		fmt.Println("error generating TOTP:", err.Error())
+		os.Exit(5)
 	}
 
 	token := twofactor.CalculateTOTP(otp, 0)
