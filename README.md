@@ -38,3 +38,6 @@ secrets [
   }
 ]
 ```
+
+# Testing
+[![Coverage Status](https://coveralls.io/repos/github/acacio/totp-token/badge.svg?branch=master)](https://coveralls.io/github/acacio/totp-token?branch=master)
