@@ -25,9 +25,12 @@ ssh <host>   (PASTE CMD-v)
 The format of the .totp-keys file is a list of domain/secret pairs:
 Note that the keys need to be capitalized (although some domains give you keys with lowercase characters).
 
+Note: url, for now, is for documentation purposes only but might be useful inthe future.
+
 ```
 secrets [
   { domain: "carta",
+		url: "otpauth://totp/Microsoft:blabla@live.com?secret=XXXXXXXXXXXXXXXX&issuer=Microsoft",
     key: "XXXXXXXXXXXX"
   },
   { domain: "gmail",
