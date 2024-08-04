@@ -44,3 +44,8 @@ secrets [
 
 # Testing
 [![Coverage Status](https://coveralls.io/repos/github/acacio/totp-token/badge.svg?branch=master)](https://coveralls.io/github/acacio/totp-token?branch=master)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Facacio%2Ftotp-token.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Facacio%2Ftotp-token?ref=badge_shield)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Facacio%2Ftotp-token.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Facacio%2Ftotp-token?ref=badge_large)
