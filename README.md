@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Facacio%2Ftotp-token.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Facacio%2Ftotp-token?ref=badge_large)
+
 # TOTP token generator tool
 
 This tool can replace Google Authenticator and easily generate several secrets.
@@ -30,7 +32,7 @@ Note: url, for now, is for documentation purposes only but might be useful inthe
 ```
 secrets [
   { domain: "carta",
-		url: "otpauth://totp/Microsoft:blabla@live.com?secret=XXXXXXXXXXXXXXXX&issuer=Microsoft",
+    url: "otpauth://totp/Microsoft:blabla@live.com?secret=XXXXXXXXXXXXXXXX&issuer=Microsoft",
     key: "XXXXXXXXXXXX"
   },
   { domain: "gmail",
@@ -44,3 +46,7 @@ secrets [
 
 # Testing
 [![Coverage Status](https://coveralls.io/repos/github/acacio/totp-token/badge.svg?branch=master)](https://coveralls.io/github/acacio/totp-token?branch=master)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Facacio%2Ftotp-token.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Facacio%2Ftotp-token?ref=badge_large)
+
