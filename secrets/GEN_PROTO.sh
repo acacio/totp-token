@@ -1,3 +1,3 @@
 #!/bin/sh
 #protoc --go_out=plugins=grpc,import_path=.:. *.proto
-protoc --go_out=plugins=:. *.proto
+protoc --go_out=. --go_opt=paths=source_relative *.proto

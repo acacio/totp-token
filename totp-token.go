@@ -17,10 +17,11 @@ limitations under the License.
 package main
 
 import (
-	"github.com/acacio/totp-token/secrets"
-	"github.com/acacio/totp-token/twofactor"
 	"os"
 	"strings"
+
+	"github.com/acacio/totp-token/secrets"
+	"github.com/acacio/totp-token/twofactor"
 
 	"encoding/base32"
 	"flag"
@@ -32,58 +33,57 @@ import (
 
 var verbose *bool
 
-func parseArgs() string {
-
-	keyPtr := flag.String("k", "", "Google Authenticator base32 secret")
-	domainPtr := flag.String("d", "", "Use domain from ~/.totp-keys")
-	verbose = flag.Bool("v", false, "Verbose.")
-	flag.Parse()
-
+func loadConfig(keyPtr, domainPtr string, homeDir string) (string, error) {
 	key := "undef"
 	switch {
-	case *keyPtr != "":
+	case keyPtr != "":
 		{
-			key = *keyPtr
+			key = keyPtr
 		}
-	case *domainPtr != "":
+	case domainPtr != "":
 		{
-			usr, err := user.Current()
+			data, err := os.ReadFile(homeDir + "/.totp-keys")
 			if err != nil {
-				fmt.Println("Can't get current user info", err.Error())
-				os.Exit(1)
-			}
-
-			data, err := os.ReadFile(usr.HomeDir + "/.totp-keys")
-			if err != nil {
-				fmt.Println("Can't get current user homedir", err.Error())
-				os.Exit(2)
+				return "", fmt.Errorf("Can't get current user homedir: %w", err)
 			}
 
 			totps := &secrets.TOTPSecrets{}
 			if err := prototext.Unmarshal(data[:], totps); err != nil {
-				fmt.Println("Failed to parse ~/.totp-keys:", err)
-				os.Exit(3)
+				return "", fmt.Errorf("Failed to parse ~/.totp-keys: %w", err)
 			}
 			for _, secret := range totps.Secrets {
-				if secret.Domain == *domainPtr {
+				if secret.Domain == domainPtr {
 					key = secret.Key
 					break
 				}
 			}
 		}
 	default:
-		fmt.Println("You must provide either a key OR a domain in ~/.totp-keys")
-		os.Exit(3)
+		return "", fmt.Errorf("You must provide either a key OR a domain in ~/.totp-keys")
 	}
 	if key == "undef" {
-		fmt.Println("ERROR: Key not defined.")
-		os.Exit(3)
+		return "", fmt.Errorf("ERROR: Key not defined.")
 	}
-	return key
+	return key, nil
 }
 
 func main() {
-	key := parseArgs()
+	keyPtr := flag.String("k", "", "Google Authenticator base32 secret")
+	domainPtr := flag.String("d", "", "Use domain from ~/.totp-keys")
+	verbose = flag.Bool("v", false, "Verbose.")
+	flag.Parse()
+
+	usr, err := user.Current()
+	if err != nil {
+		fmt.Println("Can't get current user info", err.Error())
+		os.Exit(1)
+	}
+
+	key, err := loadConfig(*keyPtr, *domainPtr, usr.HomeDir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(3)
+	}
 
 	if *verbose {
 		fmt.Println("Key: " + key)
