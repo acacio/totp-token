@@ -57,6 +57,50 @@ func TestLoadConfig_File(t *testing.T) {
 	}
 }
 
+func TestReadSecrets(t *testing.T) {
+	// Create a temp directory for home
+	tmpDir, err := os.MkdirTemp("", "totp_test_secrets")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Create a dummy .totp-keys file
+	totps := &secrets.TOTPSecrets{
+		Secrets: []*secrets.Secret{
+			{
+				Domain: "example.com",
+				Key:    "KEY1",
+			},
+			{
+				Domain: "test.com",
+				Key:    "KEY2",
+			},
+		},
+	}
+	data, err := prototext.Marshal(totps)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = os.WriteFile(filepath.Join(tmpDir, ".totp-keys"), data, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test reading secrets
+	secrets, err := readSecrets(tmpDir)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+	if len(secrets.Secrets) != 2 {
+		t.Errorf("Expected 2 secrets, got %d", len(secrets.Secrets))
+	}
+	if secrets.Secrets[0].Domain != "example.com" {
+		t.Errorf("Expected first domain example.com, got %s", secrets.Secrets[0].Domain)
+	}
+}
+
 func TestLoadConfig_Error(t *testing.T) {
 	_, err := loadConfig("", "", "")
 	if err == nil {

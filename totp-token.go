@@ -33,6 +33,19 @@ import (
 
 var verbose *bool
 
+func readSecrets(homeDir string) (*secrets.TOTPSecrets, error) {
+	data, err := os.ReadFile(homeDir + "/.totp-keys")
+	if err != nil {
+		return nil, fmt.Errorf("can't get current user homedir: %w", err)
+	}
+
+	totps := &secrets.TOTPSecrets{}
+	if err := prototext.Unmarshal(data[:], totps); err != nil {
+		return nil, fmt.Errorf("failed to parse ~/.totp-keys: %w", err)
+	}
+	return totps, nil
+}
+
 func loadConfig(keyPtr, domainPtr string, homeDir string) (string, error) {
 	key := "undef"
 	switch {
@@ -42,14 +55,9 @@ func loadConfig(keyPtr, domainPtr string, homeDir string) (string, error) {
 		}
 	case domainPtr != "":
 		{
-			data, err := os.ReadFile(homeDir + "/.totp-keys")
+			totps, err := readSecrets(homeDir)
 			if err != nil {
-				return "", fmt.Errorf("Can't get current user homedir: %w", err)
-			}
-
-			totps := &secrets.TOTPSecrets{}
-			if err := prototext.Unmarshal(data[:], totps); err != nil {
-				return "", fmt.Errorf("Failed to parse ~/.totp-keys: %w", err)
+				return "", err
 			}
 			for _, secret := range totps.Secrets {
 				if secret.Domain == domainPtr {
@@ -59,10 +67,10 @@ func loadConfig(keyPtr, domainPtr string, homeDir string) (string, error) {
 			}
 		}
 	default:
-		return "", fmt.Errorf("You must provide either a key OR a domain in ~/.totp-keys")
+		return "", fmt.Errorf("you must provide either a key OR a domain in ~/.totp-keys")
 	}
 	if key == "undef" {
-		return "", fmt.Errorf("ERROR: Key not defined.")
+		return "", fmt.Errorf("key not defined")
 	}
 	return key, nil
 }
@@ -70,6 +78,7 @@ func loadConfig(keyPtr, domainPtr string, homeDir string) (string, error) {
 func main() {
 	keyPtr := flag.String("k", "", "Google Authenticator base32 secret")
 	domainPtr := flag.String("d", "", "Use domain from ~/.totp-keys")
+	listPtr := flag.Bool("l", false, "List all available keys")
 	verbose = flag.Bool("v", false, "Verbose.")
 	flag.Parse()
 
@@ -77,6 +86,18 @@ func main() {
 	if err != nil {
 		fmt.Println("Can't get current user info", err.Error())
 		os.Exit(1)
+	}
+
+	if *listPtr {
+		totps, err := readSecrets(usr.HomeDir)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		for _, secret := range totps.Secrets {
+			fmt.Println(secret.Domain)
+		}
+		return
 	}
 
 	key, err := loadConfig(*keyPtr, *domainPtr, usr.HomeDir)
